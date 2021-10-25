@@ -22,26 +22,21 @@ class ServiceLocator
     }
 }
 
-class EnglishLocale implements LocaleInterface
+enum Locale: string implements LocaleInterface
 {
-    private static self $instance;
-
-    public static function get(): self
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
+    case eng_USA = 'eng_USA';
+    case eng_GBR = 'eng_GBR';
+    case eng_AUS = 'eng_AUS';
+    case jpn_JPN = 'jpn_JPN';
 
     public function getLanguageCode(): string
     {
-        return 'eng';
+        return explode('_', $this->value)[0];
     }
 
     public function getVariantCode(): ?string
     {
-        return 'USA';
+        return explode('_', $this->value[1]);
     }
 }
 
@@ -56,7 +51,7 @@ class SimpleMessage implements LocalisableStringInterface
 
     public function getLocale(): LocaleInterface
     {
-        return EnglishLocale::get();
+        return Locale::eng_USA;
     }
 
     public function getIdentifier(): string
