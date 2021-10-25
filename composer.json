@@ -1,0 +1,15 @@
+{
+    "name": "navarr/psr-draft-l10n",
+    "description": "A Draft of a prospective localisation PSR",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Navarr",
+            "email": "me@navarr.me"
+        }
+    ],
+    "require": {
+        "php": ">=7.1"
+    }
+}
