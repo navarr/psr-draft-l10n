@@ -11,4 +11,9 @@ interface LocalisableStringRepositoryInterface
      * @throws NoAvailableTranslationException
      */
     public function getTranslation(string $identifier, ?LocaleInterface $locale): LocalisableStringInterface;
+
+    /**
+     * @param LocalisableStringInterface $localisableString
+     */
+    public function addTranslation(LocalisableStringInterface $localisableString): void;
 }

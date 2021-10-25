@@ -40,13 +40,21 @@ enum Locale: string implements LocaleInterface
     }
 }
 
+class Message implements LocalisableStringInterface
+{
+    public function __construct(
+        private string $identifier,
+        private string $message,
+        private LocaleInterface $locale = Locale::eng_USA,
+        private string $rendererType = 'sprintf'
+    ) {
+    }
+}
+
 class SimpleMessage implements LocalisableStringInterface
 {
-    private string $message;
-
-    public function __construct(string $message)
+    public function __construct(private string $message)
     {
-        $this->message = $message;
     }
 
     public function getLocale(): LocaleInterface
@@ -100,5 +108,18 @@ function __(string $message, array $arguments = []): string
         $arguments
     );
 }
+
+$messages = [
+    new Message('Hello, World!', 'Hello, World!'),
+    new Message('Hello, World!', 'こんにちは世界!', Locale::jpn_JPN),
+];
+
+$repository = ServiceLocator::get(LocalisableStringRepositoryInterface::class);
+array_walk(
+    $messages,
+    static function (LocalisableStringInterface $message) use ($repository) {
+        $repository->addTranslation($message);
+    }
+);
 
 echo __('Hello, World!');
