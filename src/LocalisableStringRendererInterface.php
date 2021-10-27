@@ -11,4 +11,9 @@ interface LocalisableStringRendererInterface
      * @return string The rendered message
      */
     public function render(LocaleInterface $locale, string $string, iterable $parameters = []): string;
+    
+    /**
+     * @return iterable<string> The message "types" the implementation is capable of rendering
+     */
+    public function getTypes(): iterable;
 }
