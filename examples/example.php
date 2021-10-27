@@ -84,6 +84,11 @@ class SprintfMessageRenderer implements LocalisableStringRendererInterface
     {
         return sprintf($string, is_array($parameters) ? $parameters : iterator_to_array($parameters));
     }
+    
+    public function getTypes(): iterable
+    {
+        return ['sprintf'];
+    }
 }
 
 function __(string $message, array $arguments = []): string
