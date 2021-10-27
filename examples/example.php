@@ -36,7 +36,7 @@ enum Locale: string implements LocaleInterface
 
     public function getVariantCode(): ?string
     {
-        return explode('_', $this->value[1]);
+        return explode('_', $this->value)[1];
     }
 }
 
