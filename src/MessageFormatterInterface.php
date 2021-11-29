@@ -2,7 +2,7 @@
 
 namespace Psr\l10n;
 
-interface LocalisableStringRendererInterface
+interface MessageFormatterInterface
 {
     /**
      * @param string $string The message to render

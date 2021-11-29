@@ -2,7 +2,7 @@
 
 namespace Psr\l10n\Utility;
 
-class Locale implements LocaleInterface
+class EnglishDefaultedLocale implements LocaleInterface
 {
     public function __construct(
         private readonly string $tag = 'en'

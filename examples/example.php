@@ -1,20 +1,20 @@
 <?php
 
 use Psr\l10n\LocaleInterface;
-use Psr\l10n\LocalisableStringInterface;
-use Psr\l10n\LocalisableStringRendererInterface;
+use Psr\l10n\MessageInterface;
+use Psr\l10n\MessageFormatterInterface;
 use Psr\l10n\Utility\TranslationSingleton as T;
 
 // Framework Code
 
-class IcuMessageRenderer implements LocalisableStringRendererInterface
+class IcuMessageRenderer implements MessageFormatterInterface
 {
     public function getTypes(): iterable
     {
         return ['icu'];
     }
 
-    public function render(LocalisableStringInterface $message, iterable $parameters = []): string
+    public function render(MessageInterface $message, iterable $parameters = []): string
     {
         $localeString = $message->getLocale()->getTag();
         $formatter = new MessageFormatter($localeString, $message->getTranslation());
@@ -23,39 +23,28 @@ class IcuMessageRenderer implements LocalisableStringRendererInterface
     }
 }
 
-class CompositeTypeRenderer implements LocalisableStringRendererInterface
+class CompositeTypeRenderer implements MessageFormatterInterface
 {
     private array $renderers = [];
 
-    public function register(LocalisableStringRendererInterface $renderer)
+    public function register(MessageFormatterInterface $renderer)
     {
-        $this->renderers[] = $renderer;
+        foreach ($renderer->getTypes() as $type) {
+            $this->renderers[$type] = $renderer;
+        }
     }
 
     public function getTypes(): iterable
     {
-        $types = array_map(
-            static function(LocalisableStringRendererInterface $renderer) {
-                return $renderer->getTypes();
-            },
-            $this->renderers
-        );
-        return array_unique(array_merge(...$types));
+        return array_keys($this->renderers);
     }
 
-    public function render(LocalisableStringInterface $message, iterable $parameters = []): string
+    public function render(MessageInterface $message, iterable $parameters = []): string
     {
         // Lookup translation by $message->getIdentifier() and $message->getLocale()
         $translation = $message;
 
-        $renderer = null;
-        foreach ($this->renderers as $prospectiveRenderer) {
-            if (in_array($translation->getRendererType(), $prospectiveRenderer->getTypes())) {
-                $renderer = $prospectiveRenderer;
-                break;
-            }
-        }
-
+        $renderer = $this->renderers[$message->getFormatterType()] ?? null;
         if ($renderer === null) {
             throw new \RuntimeException('No applicable renderer is registered with the composite');
         }

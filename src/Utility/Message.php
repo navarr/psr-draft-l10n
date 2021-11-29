@@ -7,17 +7,17 @@ class Message implements LocalisableStringInterface
     private readonly string $translation;
 
     public function __construct(
-        private readonly string $identifier,
+        private readonly string $id,
         ?string $translation = null,
         private readonly LocaleInterface $locale = new Locale(),
         private readonly string $rendererType= 'icu'
     ){
-        $this->translation = $translation ?? $this->identifier;
+        $this->translation = $translation ?? $this->id;
     }
 
-    public function getIdentifier(): string
+    public function getId(): string
     {
-        return $this->identifier;
+        return $this->id;
     }
 
     public function getTranslation(): string

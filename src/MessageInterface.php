@@ -2,17 +2,17 @@
 
 namespace Psr\l10n;
 
-interface LocalisableStringInterface
+interface MessageInterface
 {
     /**
-     * @return LocaleInterface The locale the message was written in
+     * @return LocaleInterface The locale this message is written in
      */
     public function getLocale(): LocaleInterface;
 
     /**
      * @return string The unique identifier of the message across all translations
      */
-    public function getIdentifier(): string;
+    public function getId(): string;
 
     /**
      * @return string The message in the given locale
@@ -20,7 +20,7 @@ interface LocalisableStringInterface
     public function getTranslation(): string;
 
     /**
-     * @return string The type of renderer necessary to display the message with its given parameters
+     * @return string The type of formatter necessary to display the message with its given parameters
      */
-    public function getRendererType(): string;
+    public function getFormatterType(): string;
 }
