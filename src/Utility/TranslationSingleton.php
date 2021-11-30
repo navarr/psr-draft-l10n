@@ -2,18 +2,22 @@
 
 namespace Psr\l10n;
 
+use Psr\l10n\LocaleInterface;
+use Psr\l10n\MessageFormatterInterface;
+use Psr\l10n\MessageInterface;
+
 class TranslationSingleton
 {
-    private static TranslationRendererInterface $renderer;
+    private static MessageFormatterInterface $renderer;
 
-    public static function setRenderer(TranslationRendererInterface $renderer)
+    public static function setRenderer(MessageFormatterInterface $renderer)
     {
         $this->renderer = $renderer;
     }
 
-    public static function render(LocalisableStringInterface|string $message, iterable $parameters = [], ?string $id = null)
+    public static function render(MessageInterface|string $message, iterable $parameters = [], ?string $id = null, ?LocaleInterface $locale = null)
     {
-        $message = $message instanceof LocalisableStringInterface ? $message : new Message($id ?? $message, $message);
-        return $this->renderer->render($message, $parameters);
+        $message = $message instanceof MessageInterface ? $message : new Message($id ?? $message, $message);
+        return $this->renderer->render($message, $parameters, $locale);
     }
 }
