@@ -2,6 +2,8 @@
 
 namespace Psr\l10n\Utility;
 
+use Psr\l10n\LocaleInterface;
+
 class EnglishDefaultedLocale implements LocaleInterface
 {
     public function __construct(

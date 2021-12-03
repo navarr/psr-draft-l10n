@@ -2,15 +2,18 @@
 
 namespace Psr\l10n\Utility;
 
-class Message implements LocalisableStringInterface
+use Psr\l10n\LocaleInterface;
+use Psr\l10n\MessageInterface;
+
+class Message implements MessageInterface
 {
     private readonly string $translation;
 
     public function __construct(
         private readonly string $id,
         ?string $translation = null,
-        private readonly LocaleInterface $locale = new Locale(),
-        private readonly string $rendererType= 'icu'
+        private readonly LocaleInterface $locale = new EnglishDefaultedLocale(),
+        private readonly string $formatterType= 'icu'
     ){
         $this->translation = $translation ?? $this->id;
     }
@@ -30,8 +33,8 @@ class Message implements LocalisableStringInterface
         return $this->locale;
     }
 
-    public function getRendererType(): string
+    public function getFormatterType(): string
     {
-        return $this->rendererType;
+        return $this->formatterType;
     }
 }

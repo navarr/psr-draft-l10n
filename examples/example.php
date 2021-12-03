@@ -3,6 +3,8 @@
 use Psr\l10n\LocaleInterface;
 use Psr\l10n\MessageInterface;
 use Psr\l10n\MessageFormatterInterface;
+use Psr\l10n\Utility\EnglishDefaultedLocale;
+use Psr\l10n\Utility\Message;
 use Psr\l10n\Utility\TranslationSingleton as T;
 
 // Framework Code
@@ -14,8 +16,15 @@ class IcuMessageRenderer implements MessageFormatterInterface
         return ['icu'];
     }
 
-    public function render(MessageInterface $message, iterable $parameters = []): string
-    {
+    public function render(
+        MessageInterface|string $message,
+        iterable $parameters = [],
+        ?LocaleInterface $locale = null
+    ): string {
+        if (!$message instanceof MessageInterface) {
+            $message = new Message($message, $message, $locale ?? new EnglishDefaultedLocale(), 'icu');
+        }
+
         $localeString = $message->getLocale()->getTag();
         $formatter = new MessageFormatter($localeString, $message->getTranslation());
         $result = $formatter->format(is_array($parameters) ? $parameters : iterator_to_array($parameters));
@@ -39,21 +48,28 @@ class CompositeTypeRenderer implements MessageFormatterInterface
         return array_keys($this->renderers);
     }
 
-    public function render(MessageInterface $message, iterable $parameters = []): string
-    {
+    public function render(
+        MessageInterface|string $message,
+        iterable $parameters = [],
+        ?LocaleInterface $locale = null
+    ): string {
+        if (!$message instanceof MessageInterface) {
+            $message = new Message($message, $message, $locale ?? new EnglishDefaultedLocale(), 'icu');
+        }
+
         // Lookup translation by $message->getIdentifier() and $message->getLocale()
         $translation = $message;
 
         $renderer = $this->renderers[$message->getFormatterType()] ?? null;
         if ($renderer === null) {
-            throw new \RuntimeException('No applicable renderer is registered with the composite');
+            throw new RuntimeException('No applicable renderer is registered with the composite');
         }
 
         return $renderer->render($translation, $parameters);
     }
 }
 
-$compositeRenderer = new CompositeRenderer();
+$compositeRenderer = new CompositeTypeRenderer();
 $compositeRenderer->register(new IcuMessageRenderer());
 
 T::setRenderer($compositeRenderer);
@@ -62,20 +78,23 @@ T::setRenderer($compositeRenderer);
 
 // Simple use case using english as key
 
+$name = 'Navarr Barnier';
+
 echo T::render('Hello, {name}!', ['name' => $name]); // assumes en and ICU format
 
 // Simple use case using key but providing translation
 
-echo T::render(id: 'welcome_banner', 'Hello, {name}!', ['name' => $name]); // assumes en and ICU format
+echo T::render('Hello, {name}!', ['name' => $name], id: 'welcome_banner'); // assumes en and ICU format
 
 // Simple use case using translation as key but in another language
 
-echo T::render(new Message('こんにちは、 {name}さん！', locale: new Locale('ja')), ['name' => $name]);
+echo T::render(new Message('こんにちは、 {name}さん！', locale: new EnglishDefaultedLocale('ja')), ['name' => $name]);
 
 // or
 
-function __(string $message, array $parameters = []):string {
-    $locale = new Locale('ja');
+function __(string $message, array $parameters = []): string
+{
+    $locale = new EnglishDefaultedLocale('ja');
     $message = new Message($message, locale: $locale);
 
     return T::render($message, $parameters);
