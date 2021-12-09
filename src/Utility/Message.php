@@ -37,4 +37,9 @@ class Message implements MessageInterface
     {
         return $this->formatterType;
     }
+
+    public function __toString(): string
+    {
+        return $this->translation;
+    }
 }

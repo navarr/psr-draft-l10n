@@ -2,7 +2,9 @@
 
 namespace Psr\l10n;
 
-interface MessageInterface
+use Stringable;
+
+interface MessageInterface extends Stringable
 {
     /**
      * @return LocaleInterface The locale this message is written in

@@ -17,18 +17,18 @@ class IcuMessageRenderer implements MessageFormatterInterface
     }
 
     public function render(
-        MessageInterface|string $message,
+        Stringable|string $message,
         iterable $parameters = [],
         ?LocaleInterface $locale = null
-    ): string {
+    ): MessageInterface {
         if (!$message instanceof MessageInterface) {
-            $message = new Message($message, $message, $locale ?? new EnglishDefaultedLocale(), 'icu');
+            $message = new Message((string)$message, (string)$message, $locale ?? new EnglishDefaultedLocale(), 'icu');
         }
 
         $localeString = $message->getLocale()->getTag();
         $formatter = new MessageFormatter($localeString, $message->getTranslation());
         $result = $formatter->format(is_array($parameters) ? $parameters : iterator_to_array($parameters));
-        return $result !== false ? $result : $message->getTranslation();
+        return $result !== false ? $result : $message;
     }
 }
 
@@ -49,12 +49,12 @@ class CompositeTypeRenderer implements MessageFormatterInterface
     }
 
     public function render(
-        MessageInterface|string $message,
+        Stringable|string $message,
         iterable $parameters = [],
         ?LocaleInterface $locale = null
-    ): string {
+    ): MessageInterface {
         if (!$message instanceof MessageInterface) {
-            $message = new Message($message, $message, $locale ?? new EnglishDefaultedLocale(), 'icu');
+            $message = new Message((string)$message, (string)$message, $locale ?? new EnglishDefaultedLocale(), 'icu');
         }
 
         // Lookup translation by $message->getIdentifier() and $message->getLocale()
@@ -92,7 +92,7 @@ echo T::render(new Message('こんにちは、 {name}さん！', locale: new Eng
 
 // or
 
-function __(string $message, array $parameters = []): string
+function __(string $message, array $parameters = []): Stringable
 {
     $locale = new EnglishDefaultedLocale('ja');
     $message = new Message($message, locale: $locale);
