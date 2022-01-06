@@ -17,7 +17,12 @@ interface MessageInterface extends Stringable
     public function getId(): string;
 
     /**
-     * @return string The message in the given locale
+     * @return string|null The higher level category the message belongs to
+     */
+    public function getCategory(): ?string;
+
+    /**
+     * @return string The message in the specified locale
      */
     public function getTranslation(): string;
 
