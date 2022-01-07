@@ -12,7 +12,7 @@ class Message implements MessageInterface
     public function __construct(
         private readonly string $id,
         ?string $translation = null,
-        private readonly string $category = null,
+        private readonly string $context = null,
         private readonly LocaleInterface $locale = new EnglishDefaultedLocale(),
         private readonly string $formatterType= 'icu'
     ){
@@ -24,9 +24,9 @@ class Message implements MessageInterface
         return $this->id;
     }
 
-    public function getCategory(): ?string
+    public function getContext(): ?string
     {
-        return $this->category;
+        return $this->context;
     }
 
     public function getTranslation(): string
